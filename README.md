@@ -2,11 +2,39 @@
 
 **AI-powered consumer intelligence from customer reviews.**
 
-ConsumerLens turns unstructured review text into measurable consumer topics, transparent investigation priorities, and recommendations linked to the exact supporting evidence.
+ConsumerLens transforms unstructured customer reviews into measurable consumer topics, prioritized business issues, and evidence-backed product, pricing, and marketing recommendations.
 
-> **Synthetic demo:** The included Aster Slate 10 product and all bundled reviews are fictional. Demo results illustrate the workflow and are not market research or model-performance claims.
+<img src="assets/dashboard_demo.png" alt="ConsumerLens executive dashboard" width="100%">
 
-![ConsumerLens executive dashboard](assets/dashboard_demo.png)
+## Highlights
+
+| Metric | Result |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Reviews analyzed | 397 valid synthetic consumer reviews |
+| Topic accuracy | **52% (26/50) → 78% (39/50), +26 pp** on the fixed 50-review manually labeled synthetic validation sample |
+| Sentiment accuracy | **98% (49/50)** on the same fixed synthetic validation sample |
+| Recommendation grounding | **100% deterministic recommendation citation rate** |
+| Traceability | Recommendations link calculated metrics and topics to supporting review IDs |
+
+**Tech stack:** Python 3.11 · Streamlit · Plotly · pandas · scikit-learn · Sentence Transformers · MiniLM · BERTopic · UMAP · HDBSCAN · Hugging Face Transformers · optional OpenAI-compatible API
+
+> **Synthetic-data disclosure:** The included Aster Slate 10 product and all bundled reviews are fictional. The 52% → 78% topic result and 98% sentiment result come only from the fixed 50-review manually labeled synthetic validation sample. They are not claims of general real-world model accuracy, market performance, or business impact.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Customer Reviews] --> B[Data Validation & Preprocessing]
+    B --> C[MiniLM Embeddings]
+    C --> D[BERTopic Topic Discovery]
+    D --> E[Sentiment Analysis]
+    E --> F[Business Impact Scoring]
+    F --> G[Evidence Retrieval]
+    G --> H[Recommendation Engine]
+    H --> I[Executive Dashboard]
+```
+
+The default recommendation engine is deterministic and requires no API key. An optional LLM-assisted path receives only structured metrics and bounded review evidence, then passes schema, claim, and citation validation before its output is displayed.
 
 ## The problem
 
@@ -14,7 +42,7 @@ Product teams can receive thousands of reviews but still struggle to answer thre
 
 ConsumerLens combines semantic NLP with auditable quantitative analytics. Every priority can be traced from a topic, through calculated metrics, to review evidence and a proposed action.
 
-## Product capabilities
+## What the product does
 
 - Upload a review CSV or open the one-click synthetic demo.
 - Validate schema, remove empty/noise-only reviews and exact normalized duplicates, and report data quality.
@@ -26,43 +54,6 @@ ConsumerLens combines semantic NLP with auditable quantitative analytics. Every 
 - Generate deterministic evidence-grounded recommendations without an API key.
 - Optionally generate an LLM-assisted evidence-grounded brief from structured analytical outputs only.
 - Export topic metrics, annotated reviews, and cited recommendations as CSV.
-
-## Architecture and workflow
-
-```mermaid
-flowchart LR
-    A[Customer Reviews] --> B[Preprocessing]
-    B --> C[MiniLM Embeddings]
-    C --> D[BERTopic]
-    D --> E[Sentiment Analysis]
-    E --> F[Business Impact Scoring]
-    F --> G[Evidence Retrieval]
-    G --> H[Recommendation Engine]
-    H --> I[Executive Dashboard]
-
-    G --> J{Optional LLM enabled?}
-    J -->|No| K[Deterministic evidence-grounded brief]
-    J -->|Yes| L[Structured metrics + bounded review evidence]
-    L --> M[LLM synthesis]
-    M --> N[Schema, claim and citation validation]
-    N -->|Valid| O[LLM-assisted evidence-grounded brief]
-    N -->|Invalid or unavailable| K
-    K --> I
-    O --> I
-```
-
-The primary pipeline remains:
-
-```text
-CSV or demo reviews
-→ preprocessing
-→ MiniLM embeddings
-→ BERTopic topic discovery
-→ sentiment analysis
-→ Business Impact Score
-→ representative evidence
-→ recommendations
-```
 
 ## Methodology
 
