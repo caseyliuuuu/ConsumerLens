@@ -1,0 +1,9 @@
+metric,value,unit
+Lexical topic cohesion proxy (weighted mean),0.6226636890776717,cosine similarity
+Sentiment coverage,100.0,percent
+Topic assignment coverage,91.93954659949623,percent
+BERTopic outlier rate,8.060453400503778,percent
+Recommendation evidence citation rate,100.0,percent
+Deterministic brief reproducibility,1.0,boolean (1=true)
+Maximum recalculated impact-score difference,5.102029909664907e-11,score points
+Completed human validation rows,0.0,of 50

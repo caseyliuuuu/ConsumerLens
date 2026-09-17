@@ -1,0 +1,208 @@
+{
+  "evaluation_scope": {
+    "dataset": "Bundled synthetic Aster Slate 10 reviews",
+    "synthetic_data": true,
+    "valid_reviews": 397,
+    "topic_groups_including_outliers": 12,
+    "topic_method": "MiniLM + BERTopic",
+    "sentiment_method": "Text model",
+    "sample_sha256": "948303fc4eb81c6c5a852faff4b8355e862326c27c221bcf398f9dbbc829f4c6"
+  },
+  "topic_quality": {
+    "metric": "TF-IDF document-to-topic-centroid cosine similarity proxy",
+    "review_weighted_mean": 0.6226636890776717,
+    "unweighted_topic_mean": 0.6766394000821357,
+    "per_topic": [
+      {
+        "topic_id": -1,
+        "topic": "Unassigned / mixed",
+        "count": 32,
+        "share": 0.08060453400503778,
+        "lexical_cohesion_proxy": 0.614791154320108,
+        "singleton": false,
+        "inspect_reviews": [
+          "The included stylus is accurate and the case fits perfectly. This was a gift for my family. After 60 days of use, this is my experience.",
+          "The included stylus is accurate and the case fits perfectly. I bought it for university classes. After 26 days of use, this is my experience.",
+          "Charging is quick and the battery holds up all day. I have owned it for a month. After 79 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 0,
+        "topic": "Use / Experience / Days",
+        "count": 123,
+        "share": 0.30982367758186397,
+        "lexical_cohesion_proxy": 0.4748635568249784,
+        "singleton": false,
+        "inspect_reviews": [
+          "My experience with price / value is mixed. It meets some expectations but could improve. My main use is streaming at home. After 47 days of use, this is my experience.",
+          "My experience with customer support is mixed. It meets some expectations but could improve. I take it on the train. After 85 days of use, this is my experience.",
+          "The price feels expensive for what you get. I have owned it for a month. After 50 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 1,
+        "topic": "Quality / Build Quality / Build",
+        "count": 39,
+        "share": 0.0982367758186398,
+        "lexical_cohesion_proxy": 0.5765037593188186,
+        "singleton": false,
+        "inspect_reviews": [
+          "My experience with build quality is mixed. It meets some expectations but could improve. I have owned it for a month. After 45 days of use, this is my experience.",
+          "The metal body feels sturdy and well assembled. I have owned it for a month. After 12 days of use, this is my experience.",
+          "The metal body feels sturdy and well assembled. I use it for work notes. After 86 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 2,
+        "topic": "Clean / Settings Easy / Interface Clean",
+        "count": 26,
+        "share": 0.0654911838790932,
+        "lexical_cohesion_proxy": 0.8366660675449561,
+        "singleton": false,
+        "inspect_reviews": [
+          "The interface is clean and the settings are easy to find. I bought it for university classes. After 80 days of use, this is my experience.",
+          "The interface is clean and the settings are easy to find. I take it on the train. After 64 days of use, this is my experience.",
+          "The interface is clean and the settings are easy to find. I bought it for university classes. After 68 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 3,
+        "topic": "Latest Software / Software Update / Random",
+        "count": 25,
+        "share": 0.06297229219143577,
+        "lexical_cohesion_proxy": 0.8341610900174422,
+        "singleton": false,
+        "inspect_reviews": [
+          "The latest software update causes crashes and random restarts. I bought it for university classes. After 15 days of use, this is my experience.",
+          "The latest software update causes crashes and random restarts. I use it for work notes. After 33 days of use, this is my experience.",
+          "The latest software update causes crashes and random restarts. I bought it for university classes. After 74 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 4,
+        "topic": "Colors / Crisp / Screen Crisp",
+        "count": 24,
+        "share": 0.060453400503778336,
+        "lexical_cohesion_proxy": 0.6327429567770126,
+        "singleton": false,
+        "inspect_reviews": [
+          "The screen is crisp and colors look natural. I bought it for university classes. After 70 days of use, this is my experience.",
+          "My experience with display is mixed. It meets some expectations but could improve. I bought it for university classes. After 66 days of use, this is my experience.",
+          "The screen is crisp and colors look natural. I use it for sketching. After 22 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 5,
+        "topic": "Keeps Losing / Notifications / App Keeps",
+        "count": 23,
+        "share": 0.05793450881612091,
+        "lexical_cohesion_proxy": 0.8297453319411544,
+        "singleton": false,
+        "inspect_reviews": [
+          "Software notifications freeze and the app keeps losing my settings. My main use is streaming at home. After 26 days of use, this is my experience.",
+          "Software notifications freeze and the app keeps losing my settings. I use it for work notes. After 7 days of use, this is my experience.",
+          "Software notifications freeze and the app keeps losing my settings. I take it on the train. After 17 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 6,
+        "topic": "Apps / Apps Open / Open",
+        "count": 22,
+        "share": 0.055415617128463476,
+        "lexical_cohesion_proxy": 0.7048015206844777,
+        "singleton": false,
+        "inspect_reviews": [
+          "Apps open quickly and multitasking feels smooth. I use it for sketching. After 9 days of use, this is my experience.",
+          "Apps open quickly and multitasking feels smooth. I compared it with my previous tablet. After 13 days of use, this is my experience.",
+          "Apps open quickly and multitasking feels smooth. I use it for work notes. After 13 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 7,
+        "topic": "Games Stutter / Stutter / Games",
+        "count": 22,
+        "share": 0.055415617128463476,
+        "lexical_cohesion_proxy": 0.6291572425990977,
+        "singleton": false,
+        "inspect_reviews": [
+          "Games stutter and the tablet overheats after a short session. I take it on the train. After 9 days of use, this is my experience.",
+          "The processor handles games without any stutter. I compared it with my previous tablet. After 53 days of use, this is my experience.",
+          "Games stutter and the tablet overheats after a short session. I compared it with my previous tablet. After 11 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 8,
+        "topic": "Makes / Reading Outside / Display Brightness",
+        "count": 22,
+        "share": 0.055415617128463476,
+        "lexical_cohesion_proxy": 0.6916677918531734,
+        "singleton": false,
+        "inspect_reviews": [
+          "Display brightness makes reading outside comfortable. I use it for sketching. After 5 days of use, this is my experience.",
+          "Display brightness makes reading outside comfortable. I have owned it for a month. After 72 days of use, this is my experience.",
+          "Display brightness makes reading outside comfortable. My main use is streaming at home. After 10 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 9,
+        "topic": "Battery / Commute Evening / Evening",
+        "count": 20,
+        "share": 0.05037783375314862,
+        "lexical_cohesion_proxy": 0.5943264527939285,
+        "singleton": false,
+        "inspect_reviews": [
+          "Battery drains overnight even when the tablet is idle. I take it on the train. After 85 days of use, this is my experience.",
+          "My experience with battery life is mixed. It meets some expectations but could improve. I bought it for university classes. After 86 days of use, this is my experience.",
+          "Battery drains overnight even when the tablet is idle. I bought it for university classes. After 75 days of use, this is my experience."
+        ]
+      },
+      {
+        "topic_id": 10,
+        "topic": "Easily Feels / Keyboard Accessory / Feels Comfortable",
+        "count": 19,
+        "share": 0.04785894206549118,
+        "lexical_cohesion_proxy": 0.7002458763104819,
+        "singleton": false,
+        "inspect_reviews": [
+          "The keyboard accessory pairs easily and feels comfortable. I take it on the train. After 73 days of use, this is my experience.",
+          "My experience with accessories is mixed. It meets some expectations but could improve. This was a gift for my family. After 84 days of use, this is my experience.",
+          "The keyboard accessory pairs easily and feels comfortable. This was a gift for my family. After 15 days of use, this is my experience."
+        ]
+      }
+    ],
+    "interpretation": "A descriptive lexical cohesion proxy, not human topic accuracy or semantic coherence."
+  },
+  "coverage": {
+    "sentiment_coverage_pct": 100.0,
+    "topic_assignment_coverage_pct": 91.93954659949623,
+    "outlier_rate_pct": 8.060453400503778,
+    "outlier_review_count": 32,
+    "interpretation": "Coverage reports whether a label exists; it does not measure whether that label is correct."
+  },
+  "recommendation_grounding": {
+    "recommendation_count": 5,
+    "recommendations_with_valid_same_topic_citations": 5,
+    "evidence_citation_rate_pct": 100.0,
+    "unique_cited_review_count": 9,
+    "interpretation": "Checks citation presence, existence, and same-topic linkage; it does not judge recommendation usefulness."
+  },
+  "deterministic_reproducibility": {
+    "briefs_identical_across_two_runs": true,
+    "brief_sha256": "b8d18f86f4cbacfdab1f00196d3c88d3776526e9d046be0426751fdd6f6b93d9",
+    "max_impact_score_difference_after_recalculation": 5.102029909664907e-11,
+    "interpretation": "Two same-input deterministic brief runs are compared byte-for-byte after canonical JSON serialization; impact scores are recalculated from the saved review assignments."
+  },
+  "manual_validation_status": {
+    "sample_rows": 50,
+    "rows_with_both_human_labels": 0,
+    "accuracy_reported": false,
+    "interpretation": "Human fields are intentionally blank, so no topic or sentiment accuracy is claimed."
+  },
+  "limitations": [
+    "The included dataset is synthetic.",
+    "Lexical cohesion is a proxy and does not establish topic correctness.",
+    "Coverage and citation validity do not measure model accuracy or business value.",
+    "BERTopic stability across repeated stochastic fits is not measured here.",
+    "No LLM quality benchmark is reported because no human rubric labels are available."
+  ]
+}
