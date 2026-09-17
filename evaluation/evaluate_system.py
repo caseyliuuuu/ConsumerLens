@@ -1,3 +1,4 @@
+
 """Reproducible, descriptive evaluation of the bundled ConsumerLens demo."""
 from __future__ import annotations
 
@@ -59,10 +60,17 @@ def evaluate(snapshot_path: Path, validation_path: Path) -> tuple[dict, pd.DataF
     max_score_difference = float((rescored.impact_score - saved.impact_score).abs().max())
 
     validation = pd.read_csv(validation_path, keep_default_na=False)
+    topic_checked = validation.topic_correct.astype(str).str.strip().str.lower()
+    sentiment_checked = validation.sentiment_correct.astype(str).str.strip().str.lower()
+
+    topic_valid = topic_checked.isin(["true", "false"])
+    sentiment_valid = sentiment_checked.isin(["true", "false"])
+
+    topic_accuracy = topic_checked[topic_valid].eq("true").mean() * 100
+    sentiment_accuracy = sentiment_checked[sentiment_valid].eq("true").mean() * 100
     labeled = validation.human_topic.astype(str).str.strip().ne("") & validation.human_sentiment.astype(str).str.strip().ne("")
 
-    result = {
-        "evaluation_scope": {
+    result = {        "evaluation_scope": {
             "dataset": "Bundled synthetic Aster Slate 10 reviews",
             "synthetic_data": True,
             "valid_reviews": total,
@@ -97,19 +105,22 @@ def evaluate(snapshot_path: Path, validation_path: Path) -> tuple[dict, pd.DataF
             "brief_sha256": hashlib.sha256(canonical_first.encode("utf-8")).hexdigest(),
             "max_impact_score_difference_after_recalculation": max_score_difference,
             "interpretation": "Two same-input deterministic brief runs are compared byte-for-byte after canonical JSON serialization; impact scores are recalculated from the saved review assignments.",
-        },
-        "manual_validation_status": {
-            "sample_rows": len(validation),
-            "rows_with_both_human_labels": int(labeled.sum()),
-            "accuracy_reported": False,
-            "interpretation": "Human fields are intentionally blank, so no topic or sentiment accuracy is claimed.",
+        },"manual_validation_status": {
+    "sample_rows": len(validation),
+    "rows_with_both_human_labels": int(labeled.sum()),
+    "topic_accuracy_pct": float(topic_accuracy),
+    "sentiment_accuracy_pct": float(sentiment_accuracy),
+    "topic_validation_rows": int(topic_valid.sum()),
+    "sentiment_validation_rows": int(sentiment_valid.sum()),
+    "accuracy_reported": True,
+          "interpretation": "Accuracy is calculated from manually reviewed validation rows.",
         },
         "limitations": [
             "The included dataset is synthetic.",
             "Lexical cohesion is a proxy and does not establish topic correctness.",
             "Coverage and citation validity do not measure model accuracy or business value.",
             "BERTopic stability across repeated stochastic fits is not measured here.",
-            "No LLM quality benchmark is reported because no human rubric labels are available.",
+            "Human validation reports topic and sentiment accuracy on a 50-review manually labeled sample; recommendation quality is not human-benchmarked.",
         ],
     }
     summary = pd.DataFrame(
@@ -121,6 +132,8 @@ def evaluate(snapshot_path: Path, validation_path: Path) -> tuple[dict, pd.DataF
             {"metric": "Recommendation evidence citation rate", "value": np.mean(grounded) * 100 if grounded else np.nan, "unit": "percent"},
             {"metric": "Deterministic brief reproducibility", "value": int(canonical_first == canonical_second), "unit": "boolean (1=true)"},
             {"metric": "Maximum recalculated impact-score difference", "value": max_score_difference, "unit": "score points"},
+            {"metric": "Human-validated topic accuracy", "value": topic_accuracy, "unit": "percent"},
+            {"metric": "Human-validated sentiment accuracy", "value": sentiment_accuracy, "unit": "percent"},
             {"metric": "Completed human validation rows", "value": int(labeled.sum()), "unit": f"of {len(validation)}"},
         ]
     )

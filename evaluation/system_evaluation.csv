@@ -6,4 +6,6 @@ BERTopic outlier rate,8.060453400503778,percent
 Recommendation evidence citation rate,100.0,percent
 Deterministic brief reproducibility,1.0,boolean (1=true)
 Maximum recalculated impact-score difference,5.102029909664907e-11,score points
-Completed human validation rows,0.0,of 50
+Human-validated topic accuracy,52.0,percent
+Human-validated sentiment accuracy,98.0,percent
+Completed human validation rows,50.0,of 50

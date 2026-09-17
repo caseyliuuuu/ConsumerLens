@@ -1,10 +1,49 @@
 """Semantic topic discovery with explicit, observable degradation paths."""
 from functools import lru_cache
+import re
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+
+# Exact phrases used by the bundled synthetic-data generator. They are removed
+# only from the modeling view; review_text remains the source of truth shown as
+# evidence. Keeping this list narrow avoids erasing similar real feedback.
+SYNTHETIC_CONTEXT_PATTERNS = (
+    r"\bAfter\s+\d+\s+days?\s+of\s+use,\s+this\s+is\s+my\s+experience\.?",
+    r"\bI\s+use\s+it\s+for\s+(?:sketching|work\s+notes)\.?",
+    r"\bI\s+take\s+it\s+on\s+the\s+train\.?",
+    r"\bI\s+compared\s+it\s+with\s+my\s+previous\s+tablet\.?",
+    r"\bI\s+bought\s+it\s+for\s+university\s+classes\.?",
+    r"\bI\s+have\s+owned\s+it\s+for\s+a\s+month\.?",
+    r"\bThis\s+was\s+a\s+gift\s+for\s+my\s+family\.?",
+    r"\bMy\s+main\s+use\s+is\s+streaming\s+at\s+home\.?",
+    r"\bIt\s+meets\s+some\s+expectations\s+but\s+could\s+improve\.?",
+)
+
+
+def prepare_topic_text(text: str) -> str:
+    """Return a modeling-only view with known synthetic template text removed."""
+    original = str(text)
+    cleaned = original
+    removed_template = False
+    for pattern in SYNTHETIC_CONTEXT_PATTERNS:
+        updated = re.sub(pattern, " ", cleaned, flags=re.IGNORECASE)
+        removed_template = removed_template or updated != cleaned
+        cleaned = updated
+    if not removed_template:
+        return original
+    cleaned = re.sub(r"\s+", " ", cleaned).strip(" .,-;:")
+    return cleaned or original
+
+
+def add_topic_text(df: pd.DataFrame) -> pd.DataFrame:
+    """Add topic_text without modifying review_text or any source column."""
+    out = df.copy()
+    out["topic_text"] = out["review_text"].map(prepare_topic_text)
+    return out
 
 @lru_cache(maxsize=1)
 def embedding_model():
@@ -13,7 +52,7 @@ def embedding_model():
 
 def discover_topics(df: pd.DataFrame, mode: str = 'auto') -> tuple[pd.DataFrame, dict, dict]:
     """Return assigned reviews, topic evidence, and method/warnings; no invented counts."""
-    out = df.copy(); texts = out.review_text.tolist(); n = len(texts)
+    out = add_topic_text(df); texts = out.topic_text.tolist(); n = len(texts)
     if not n: raise ValueError('No valid reviews remain. Upload reviews containing text.')
     warnings = []; vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1,2), max_features=12000)
     try: lexical = vectorizer.fit_transform(texts)
@@ -29,8 +68,29 @@ def discover_topics(df: pd.DataFrame, mode: str = 'auto') -> tuple[pd.DataFrame,
     if embeddings is not None and mode == 'auto' and n >= 15:
         try:
             from bertopic import BERTopic
+            from hdbscan import HDBSCAN
             from umap import UMAP
-            model = BERTopic(embedding_model=None, umap_model=UMAP(n_neighbors=min(15,n-1),n_components=min(5,n-2),random_state=42), min_topic_size=max(3,min(15,n//20)))
+            min_topic_size = max(3, min(15, n // 20))
+            reducer = UMAP(
+                n_neighbors=min(15, n - 1),
+                n_components=min(5, n - 2),
+                random_state=42,
+                transform_seed=42,
+                n_jobs=1,
+            )
+            clusterer = HDBSCAN(
+                min_cluster_size=min_topic_size,
+                metric='euclidean',
+                cluster_selection_method='eom',
+                prediction_data=True,
+                core_dist_n_jobs=1,
+            )
+            model = BERTopic(
+                embedding_model=None,
+                umap_model=reducer,
+                hdbscan_model=clusterer,
+                min_topic_size=min_topic_size,
+            )
             labels, _ = model.fit_transform(texts, embeddings)
             if len(set(labels)-{-1})<2: raise ValueError('Insufficient distinct density clusters')
             method = 'MiniLM + BERTopic'
@@ -51,7 +111,17 @@ def discover_topics(df: pd.DataFrame, mode: str = 'auto') -> tuple[pd.DataFrame,
         label='Unassigned / mixed' if topic==-1 else ' / '.join(w.title() for w in keywords[:3])
         info[int(topic)]={'label':label,'keywords':keywords,'representative_ids':out.iloc[reps].review_id.tolist()}
     out['topic']=out.topic_id.map(lambda t:info[t]['label'])
-    return out,info,{'method':method,'warnings':warnings}
+    changed = int(out.topic_text.ne(out.review_text).sum())
+    return out,info,{
+        'method': method,
+        'warnings': warnings,
+        'topic_text_preprocessing': {
+            'field': 'topic_text',
+            'review_text_preserved': bool(out.review_text.equals(df.review_text)),
+            'reviews_changed': changed,
+            'strategy': 'Remove exact known synthetic context templates only.',
+        },
+    }
 
 def rename_topics_with_api(df: pd.DataFrame, topics: dict) -> dict:
     """Optional display labels only; never alter assignments, evidence IDs, or counts."""

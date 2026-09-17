@@ -7,7 +7,7 @@ Verified locally on Python 3.11.7 on 2026-09-16.
 - Created a separate temporary Python 3.11.7 environment without modifying the project's existing `.venv`.
 - Installed every package in `requirements.txt` successfully. `pip check` reported no broken requirements.
 - Compiled the application, analysis modules, evaluation scripts, and tests without syntax errors.
-- Ran 12 regression and dashboard tests: all passed in 2.358 seconds.
+- Ran 13 regression and dashboard tests, including `topic_text` source-text preservation and narrow template removal: all passed.
 - Started Streamlit from the clean environment and received `ok` from `/_stcore/health`.
 - Inspected the rendered landing page, executive overview, relative priority language, recommendation mode label, Product/Pricing/Marketing cards, and expandable evidence in a browser.
 - Ran the 400-row synthetic sample through the preferred path. Preprocessing retained 397 reviews, and the run completed with 12 displayed topic groups using `MiniLM + BERTopic` and the text sentiment model with no fallback warnings.
@@ -26,9 +26,25 @@ Verified locally on Python 3.11.7 on 2026-09-16.
 | Recommendation evidence citation rate | 100.0% |
 | Deterministic brief reproducibility | Identical across two runs |
 | Maximum impact-score recalculation difference | 5.1020299e-11 |
-| Completed human validation rows | 0 of 50 |
+| Human-validated topic accuracy | 52.0% (26/50) |
+| Human-validated sentiment accuracy | 98.0% (49/50) |
+| Completed human validation rows | 50 of 50 |
 
-These measurements are descriptive. Lexical cohesion is not topic accuracy, coverage is not sentiment correctness, and valid citations do not establish recommendation usefulness. The 50 human-validation rows remain intentionally unlabeled, so no accuracy claim is made.
+These measurements are descriptive. Lexical cohesion is not topic accuracy, coverage is not sentiment correctness, and valid citations do not establish recommendation usefulness.
+
+## Template-aware topic experiment
+
+V2 removes exact known synthetic context templates from a separate `topic_text` field while retaining `review_text` byte-for-byte for evidence. The clustering and fixed-vocabulary business-topic naming complete before the evaluation script reads the held-out human labels.
+
+| Measurement | Baseline | Saved V2 run | Change |
+|---|---:|---:|---:|
+| Topic accuracy on the same 50 rows | 52.0% | 78.0% | +26.0 pp |
+| Outlier rate | 8.06% | 9.57% | +1.51 pp |
+| Assignment coverage | 91.94% | 90.43% | -1.51 pp |
+| Sentiment accuracy | 98.0% | 98.0% | unchanged |
+| Sentiment coverage | 100.0% | 100.0% | unchanged |
+
+The V2 run changed 175 of 397 normalized business-topic assignments. Within the validation sample, it corrected 16 baseline errors and introduced 3 new errors. Detailed per-topic confusion, corrected examples, and regressions are stored in `topic_v2_comparison.json`, `topic_v2_confusion.csv`, and `topic_v2_validation.csv`. The result is a descriptive synthetic-data experiment; the sample is small and BERTopic assignments can vary across environments.
 
 ## LLM-path validation
 
@@ -46,5 +62,5 @@ No paid endpoint was called. Automated tests verify the structured evidence payl
 1. Upload a private real-world CSV through the browser and confirm its column mapping and source-specific interpretation.
 2. Save each export through the browser and review it in the intended spreadsheet tool.
 3. If LLM mode will be shown, configure the intended provider and review a live response under that provider's data policy. No live paid-provider response is claimed here.
-4. Complete the 50 human labels before reporting topic or sentiment accuracy.
+4. Expand the human-labeled sample before treating the measured accuracy as representative of real review data.
 5. Refresh `assets/dashboard_demo.png` after any later visual customization.

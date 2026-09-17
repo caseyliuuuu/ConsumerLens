@@ -74,6 +74,8 @@ Only `review_text` is required. Preprocessing uses conservative Unicode and whit
 
 The preferred path embeds reviews with `all-MiniLM-L6-v2` and clusters them with BERTopic. BERTopic outliers remain visible as `Unassigned / mixed`. If BERTopic cannot produce usable clusters, ConsumerLens falls back to embedding KMeans. An explicit offline mode uses TF-IDF plus KMeans. KMeans uses `random_state=42`.
 
+V2 keeps the original `review_text` unchanged and creates a separate `topic_text` modeling field. Qualitative error analysis found that repeated synthetic context sentences—such as days-of-use, commute, gift, and generic usage phrases—were dominating some clusters. V2 removes only the generator's known template phrases from `topic_text` before embedding. The 50 human topic labels remained held out: they were loaded only after clustering and cluster naming, and were not used to train, tune, or directly assign topics.
+
 Topic names default to deterministic keyword labels. The synthetic demo includes shorter presentation labels reviewed against representative evidence; original model labels remain visible in Topic Explorer and assignments do not change.
 
 ### Sentiment and trends
@@ -157,11 +159,25 @@ This writes [evaluation/system_evaluation.json](evaluation/system_evaluation.jso
 | Deterministic recommendation citation rate | 100.0% | Every recommendation had existing, same-topic review citations |
 | Deterministic reproducibility | Identical across two runs | Canonical deterministic brief output matched for the same saved input |
 | Maximum impact-score recalculation difference | `5.10e-11` | Saved and recalculated scores matched within floating-point precision |
-| Completed human validation rows | 0 of 50 | Human fields are blank; no accuracy result is claimed |
+| Human-validated baseline topic accuracy | 52.0% (26/50) | Agreement on the fixed manually labeled sample |
+| Human-validated sentiment accuracy | 98.0% (49/50) | Sentiment agreement on the same sample |
+| Completed human validation rows | 50 of 50 | All held-out evaluation rows have human topic and sentiment labels |
 
-The lexical cohesion proxy is not semantic coherence or human topic quality. Citation validity does not establish recommendation usefulness. BERTopic stability across repeated stochastic fits and LLM recommendation quality are not benchmarked because no suitable human labels are available.
+The lexical cohesion proxy is not semantic coherence or human topic quality. Citation validity does not establish recommendation usefulness. LLM recommendation quality is not human-benchmarked.
 
-For manual review, `evaluation/sample_validation.csv` contains 50 reproducibly sampled reviews with blank human topic and sentiment fields. Complete those fields before reporting topic or sentiment accuracy.
+`evaluation/sample_validation.csv` is the preserved baseline validation set. Its labels and baseline correctness columns are never rewritten by the V2 experiment.
+
+### V2 topic-modeling experiment
+
+Run the template-aware experiment separately from the baseline:
+
+```bash
+PYTHONHASHSEED=42 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 python evaluation/evaluate_topic_model_v2.py
+```
+
+The saved V2 run improved topic accuracy from **52.0% to 78.0%**, a **+26.0 percentage-point** change. Its outlier rate was **9.57%**, compared with **8.06%** at baseline, so assignment coverage moved from **91.94% to 90.43%**. Across all 397 valid reviews, 175 normalized business-topic assignments changed. On the 50-review validation set, 16 baseline errors were corrected and 3 previously correct assignments became incorrect. Sentiment stayed fixed at 98.0% accuracy and 100% coverage.
+
+Outputs are isolated in `data/demo_analysis_v2.json` and `evaluation/topic_v2_*`; baseline snapshots, evaluation results, and human labels remain unchanged. See [evaluation/topic_v2_comparison.json](evaluation/topic_v2_comparison.json) for examples and [evaluation/topic_v2_confusion.csv](evaluation/topic_v2_confusion.csv) for the per-topic error breakdown. The sample is small and BERTopic can vary across environments, so the change is descriptive rather than a general performance claim.
 
 ## Tech stack
 

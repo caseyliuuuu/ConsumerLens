@@ -194,15 +194,19 @@
   },
   "manual_validation_status": {
     "sample_rows": 50,
-    "rows_with_both_human_labels": 0,
-    "accuracy_reported": false,
-    "interpretation": "Human fields are intentionally blank, so no topic or sentiment accuracy is claimed."
+    "rows_with_both_human_labels": 50,
+    "topic_accuracy_pct": 52.0,
+    "sentiment_accuracy_pct": 98.0,
+    "topic_validation_rows": 50,
+    "sentiment_validation_rows": 50,
+    "accuracy_reported": true,
+    "interpretation": "Accuracy is calculated from manually reviewed validation rows."
   },
   "limitations": [
     "The included dataset is synthetic.",
     "Lexical cohesion is a proxy and does not establish topic correctness.",
     "Coverage and citation validity do not measure model accuracy or business value.",
     "BERTopic stability across repeated stochastic fits is not measured here.",
-    "No LLM quality benchmark is reported because no human rubric labels are available."
+    "Human validation reports topic and sentiment accuracy on a 50-review manually labeled sample; recommendation quality is not human-benchmarked."
   ]
 }

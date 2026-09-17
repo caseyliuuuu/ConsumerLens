@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from src.preprocessing import preprocess
-from src.topic_modeling import discover_topics
+from src.topic_modeling import discover_topics, prepare_topic_text
 from src.sentiment import analyze_sentiment
 from src.trend_analysis import analyze_trends
 from src.impact_scoring import score_topics
@@ -23,6 +23,15 @@ class PipelineTests(unittest.TestCase):
     def test_quality_aliases(self):
         d,q=preprocess(pd.DataFrame({'comment':[' Good! ','good!',None,'123','No'],'stars':[5,5,3,2,9]}))
         self.assertEqual(len(d),2);self.assertEqual(q['duplicates_removed'],1);self.assertEqual(q['invalid_ratings'],1)
+    def test_topic_text_removes_only_known_synthetic_templates(self):
+        original='Battery lasts all day. I take it on the train. After 12 days of use, this is my experience.'
+        self.assertEqual(prepare_topic_text(original),'Battery lasts all day')
+        substantive='I use it for video editing because performance is excellent.'
+        self.assertEqual(prepare_topic_text(substantive),substantive)
+        d,_=preprocess(pd.DataFrame({'review_text':[original]}));modeled,_,meta=discover_topics(d,'offline')
+        self.assertEqual(modeled.review_text.iloc[0],original)
+        self.assertNotEqual(modeled.topic_text.iloc[0],original)
+        self.assertTrue(meta['topic_text_preprocessing']['review_text_preserved'])
     def test_missing_and_small(self):
         for texts in [['ok'],['a','the'],['great','bad','fine']]:
             d,_=preprocess(pd.DataFrame({'text':texts}));d,t,_=discover_topics(d,'offline');d,_=analyze_sentiment(d,False)
